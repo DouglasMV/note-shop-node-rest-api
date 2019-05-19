@@ -7,10 +7,16 @@ const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
-mongoose.connect('mongodb+srv://douglas:'+ process.env.MONGO_ATLAS_PW +'@note-shop-node-rest-api-jjlme.mongodb.net/test?retryWrites=true',
+//mongoose.connect('mongodb+srv://douglas:'+ process.env.MONGO_ATLAS_PW +'@note-shop-node-rest-api-jjlme.mongodb.net/test?retryWrites=true',
+//{
+//    useNewUrlParser: true
+//});
+
+mongoose.connect('mongodb://localhost:27017/note-shop-node-rest-api',
 {
     useNewUrlParser: true
 });
+
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
