@@ -3,6 +3,8 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const rateLimit = require("express-rate-limit");
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
@@ -20,6 +22,7 @@ mongoose.connect('mongodb://localhost:27017/note-shop-node-rest-api',
 
 mongoose.Promise = global.Promise;
 
+app.use(helmet());
 app.use(morgan('dev'));
 app.use('/upload', express.static('upload'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -35,9 +38,19 @@ app.use((req,res,next) => {
     next();
 });
 
-app.use('/products', productRoutes);
+// const productsLimiter = rateLimit({
+//     windowMs: 1 * 1000, // 1 segundo
+//     max: 3
+// });
+
+const userLimiter = rateLimit({
+    windowMs: 1 * 1000, // 1 minuto
+    max: 3
+});
+
+app.use('/products', /*productsLimiter,*/ productRoutes);
 app.use('/orders', orderRoutes);
-app.use('/user', userRoutes);
+app.use('/user', userLimiter, userRoutes);
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');
